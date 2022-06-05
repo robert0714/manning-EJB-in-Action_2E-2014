@@ -31,7 +31,6 @@ import javax.persistence.Temporal;
 /**
  * Represents a bid on an item
  */
-@Named
 @RequestScoped
 @Entity
 @Table(name="BIDS")
@@ -57,13 +56,20 @@ public class Bid {
      * Bidder
      */
     private Bidder bidder;
-
     /**
+     * Amount
+     */
+    private String amount;
+    
+
+	/**
      * Default constructor
      */
     public Bid() {
         // No content
     }
+    
+    
 
     /**
      * Constructs a new bid given the bidder/item/price
@@ -164,4 +170,14 @@ public class Bid {
     public void setBidder(Bidder bidder) {
         this.bidder = bidder;
     }
+
+
+    
+    public String getAmount() {
+		return amount;
+	}
+	public void setAmount(String amount) {
+		this.amount = amount;
+	}
+    
 }

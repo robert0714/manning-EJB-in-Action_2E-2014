@@ -100,7 +100,7 @@
     <dependencies>
        <dependency>
             <groupId>jakarta.platform</groupId>
-            <artifactId>jakarta.jakartaee-api</artifactId>
+            <artifactId>jakarta.jakartaee-web-api</artifactId>
             <version>${jakartaee-api.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -137,8 +137,7 @@
             <groupId>org.jboss.spec.javax.faces</groupId>
             <artifactId>jboss-jsf-api_2.3_spec</artifactId>
             <scope>provided</scope>
-        </dependency>
-        
+        </dependency> 
         
         <!-- Import the EJB API, we use provided scope as the API is included in WildFly / JBoss EAP -->
         <dependency>

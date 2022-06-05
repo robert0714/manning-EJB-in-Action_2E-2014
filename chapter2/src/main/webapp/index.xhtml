@@ -2,14 +2,17 @@
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:ui="http://java.sun.com/jsf/facelets">
+      xmlns:f="http://java.sun.com/jsf/core"  >
 <h:body>
+    <h1>JSF Test</h1>
     <h:form id="bid-form" >
-        <h:inputText id="input-bid" value="#{bid.amount}"/>
+        <h:outputLabel for="input" value="Input" />
+        <h:inputText id="input-bid" value="#{bidManager.bid.amount}" />
         <h:commandButton id="place-bid-button"
                          value="Place Bid!"
-                         action="#{bidManager.placeBid}"/>
+                         action="#{bidManager.placeBid}">
+               <f:ajax execute="@form" render=":output" />           
+        </h:commandButton>
     </h:form>
 </h:body>
 </html>
