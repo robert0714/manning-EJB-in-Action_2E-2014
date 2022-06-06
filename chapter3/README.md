@@ -1,0 +1,2 @@
+# [How to code an EJB Remote Client with WildFly](http://www.mastertheboss.com/jbossas/jboss-as-7/jboss-as-7-remote-ejb-client-tutorial/)
+* https://github.com/fmarchioni/mastertheboss/tree/master/ejb/remote-ejb-latest

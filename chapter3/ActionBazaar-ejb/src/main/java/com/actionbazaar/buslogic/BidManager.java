@@ -19,11 +19,13 @@ package com.actionbazaar.buslogic;
 import com.actionbazaar.persistence.Bid;
 import com.actionbazaar.persistence.Item;
 import java.util.List;
-import javax.ejb.Remote;
+
+import javax.ejb.Local; 
 
 /**
  * Remote interface for BidManager
  */
+@Local
 public interface BidManager {
 
     /**

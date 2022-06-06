@@ -3,14 +3,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>ActionBazaar</artifactId>
+        <artifactId>chapter3.ActionBazaar</artifactId>
         <groupId>com.actionbazaar.chapter3</groupId>
         <version>1.0-SNAPSHOT</version>
-    </parent>
-    <groupId>com.actionbazaar.chapter3</groupId>
+    </parent> 
     <artifactId>ActionBazaar-ear</artifactId>
-    <packaging>ear</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <packaging>ear</packaging> 
     <name>Action Bazaar EAR</name>
     <url>http://code.google.com/p/action-bazaar/</url>
     <build>
@@ -26,16 +24,44 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-ear-plugin</artifactId>
+                <version>${version.ear.plugin}</version>
                 <configuration>
-                    <version>6</version>
-                    <generateClient>true</generateClient>
+                    <!-- Tell Maven we are using Jakarta EE -->
+                    <version>8</version>
+                    <!-- Use Jakarta EE ear libraries as needed. Jakarta EE ear libraries
+                        are in easy way to package any libraries needed in the ear, and automatically
+                        have any modules (EJB-JARs and WARs) use them -->
+                    <defaultLibBundleDir>lib</defaultLibBundleDir>
                     <modules>
-                        <jarModule>
+                    <!-- Default context root of the web app is /chapter3.ActionBazaar-new-web.
+                        If a custom context root is needed, uncomment the following snippet to
+                        register our War as a web module and set the contextRoot property -->
+                         <!--
+                        <webModule>
                             <groupId>com.actionbazaar.chapter3</groupId>
-                            <artifactId>ActionBazaar-client</artifactId>
-                            <includeInApplicationXml>true</includeInApplicationXml>
-                        </jarModule>
+                            <bundleFileName>ActionBazaar-web.war</bundleFileName>
+                            <artifactId>ActionBazaar-web</artifactId>
+                            <contextRoot>actionbazaar</contextRoot>
+                        </webModule>
+                        <ejbModule>
+                            <groupId>com.actionbazaar.chapter3</groupId>
+                            <bundleFileName>ActionBazaar-ejb.jar</bundleFileName>
+                            <artifactId>ActionBazaar-ejb</artifactId>
+                        </ejbModule>
+                         -->
                     </modules>
+                    <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>                
+                </configuration>
+            </plugin>
+            <!-- The WildFly plug-in deploys your ear to a local WildFly / JBoss EAP container.
+                Due to Maven's lack of intelligence with EARs we need to configure
+                the WildFly Maven plug-in to skip deployment for all modules. We then enable
+                it specifically in the ear module. -->
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <configuration>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
         </plugins>
@@ -54,14 +80,15 @@
             <version>1.0-SNAPSHOT</version>
             <type>war</type>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>com.actionbazaar.chapter3</groupId>
             <artifactId>ActionBazaar-client</artifactId>
             <version>1.0-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
+         -->
     </dependencies>
-    <properties>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+    <properties> 
     </properties>
 </project>
