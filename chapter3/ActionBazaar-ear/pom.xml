@@ -36,7 +36,7 @@
                     <!-- Default context root of the web app is /chapter3.ActionBazaar-new-web.
                         If a custom context root is needed, uncomment the following snippet to
                         register our War as a web module and set the contextRoot property -->
-                         <!--
+                         <!-- 
                         <webModule>
                             <groupId>com.actionbazaar.chapter3</groupId>
                             <bundleFileName>ActionBazaar-web.war</bundleFileName>
@@ -48,7 +48,7 @@
                             <bundleFileName>ActionBazaar-ejb.jar</bundleFileName>
                             <artifactId>ActionBazaar-ejb</artifactId>
                         </ejbModule>
-                         -->
+                        -->
                     </modules>
                     <outputFileNameMapping>@{artifactId}@@{dashClassifier?}@.@{extension}@</outputFileNameMapping>                
                 </configuration>

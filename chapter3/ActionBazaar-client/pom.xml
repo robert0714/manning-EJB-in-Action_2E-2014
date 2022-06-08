@@ -45,6 +45,28 @@
 					</arguments>
 				</configuration>
 			</plugin>
+			<plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.actionbazaar.client.AccountCreatorClient</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly.maven.plugin}</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
         <finalName>ActionBazaar-client</finalName>
     </build>
@@ -53,9 +75,8 @@
         <dependency>
             <groupId>com.actionbazaar.chapter3</groupId>
             <artifactId>ActionBazaar-ejb</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>ejb-client</type>
-            <scope>compile</scope>
+            <version>1.0-SNAPSHOT</version> 
+            <scope>compile</scope> 
         </dependency>        
         <!-- Include the ejb client jars -->
         <dependency>
@@ -63,7 +84,17 @@
 			<artifactId>wildfly-ejb-client-bom</artifactId>
 			<type>pom</type>
 			<scope>compile</scope>
+		</dependency> 
+		<dependency>
+		    <groupId>org.jboss.spec.javax.transaction</groupId>
+		    <artifactId>jboss-transaction-api_1.3_spec</artifactId> 
 		</dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+       
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

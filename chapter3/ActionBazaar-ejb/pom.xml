@@ -7,10 +7,8 @@
         <groupId>com.actionbazaar.chapter3</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.actionbazaar.chapter3</groupId>
     <artifactId>ActionBazaar-ejb</artifactId>
     <packaging>ejb</packaging>
-    <version>1.0-SNAPSHOT</version>
     <name>Action Bazaar EJB</name>
     <url>http://code.google.com/p/action-bazaar/</url>    
     <dependencies>
@@ -21,17 +19,7 @@
             <version>${ejb.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Dependency for java ee -->
-        <dependency>
-			<groupId>jakarta.platform</groupId>
-			<artifactId>jakarta.jakartaee-web-api</artifactId> 
-			<scope>provided</scope>
-		</dependency>
-        <!-- Dependency for JPA -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
+       
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
