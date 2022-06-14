@@ -4,15 +4,129 @@
 	<groupId>com.actionbazaar.chapter5</groupId>
 	<artifactId>chapter5</artifactId>
 	<version>1.0-SNAPSHOT</version>
-
+    <packaging>ejb</packaging>
 	<description>chapter 5 listings code</description>
-
-	
+    <properties>
+    	<jakartaee-api.version>8.0.0</jakartaee-api.version>
+        
+        <!-- JBoss dependency versions -->
+        <version.wildfly.maven.plugin>7.0.2.Final</version.wildfly.maven.plugin>
+        
+        <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks. -->
+        <version.jboss.bom>26.1.1.Final</version.jboss.bom>
+        <wildfly.version>26.1.0.Final</wildfly.version>
+        
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        
+        <!-- other plugin versions -->
+        <version.compiler.plugin>3.8.1</version.compiler.plugin>
+        <version.surefire.plugin>2.22.2</version.surefire.plugin>
+        <version.failsafe.plugin>2.22.2</version.failsafe.plugin> 
+        <version.war.plugin>3.3.2</version.war.plugin>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <ejb.version>3.2</ejb.version>
+    </properties>
+	<dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-web-api</artifactId>
+                <version>${jakartaee-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>${jakartaee-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- JBoss distributes a complete set of Jakarta EE 8 APIs including
+                a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or 
+                a collection) of artifacts. We use this here so that we always get the correct 
+                versions of artifacts. Here we use the wildfly-jakartaee-8.0-with-tools stack
+                (you can read this as the WildFly stack of the Jakarta EE 8 APIs -->
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <version>${version.jboss.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/developing_jakarta_enterprise_beans_applications/index#legacy_ejb_client_compatibility -->
+            <dependency>
+                <groupId>org.wildfly</groupId>
+                <artifactId>wildfly-ejb-client-legacy-bom</artifactId>
+                <version>${version.jboss.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency> 
+        </dependencies>
+    </dependencyManagement> 
 	<dependencies>
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
-		</dependency>
-	</dependencies>
+            <groupId>jakarta.platform</groupId> 
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>${jakartaee-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency> 
+        <dependency>
+            <groupId>org.jboss.arquillian.junit</groupId>
+            <artifactId>arquillian-junit-container</artifactId>
+            <scope>test</scope>
+        </dependency> 
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <scope>test</scope>               
+        </dependency>
+    </dependencies>
+	<build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <argLine>-XX:MaxPermSize=256m -Xms512m -Xmx512m -XX:+UseConcMarkSweepGC
+                        -XX:+CMSPermGenSweepingEnabled -XX:+CMSClassUnloadingEnabled
+                    </argLine>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExcludes>org.jboss.spec.javax.annotation:jboss-annotations-api_1.1_spec
+                        </classpathDependencyExcludes>
+                        <classpathDependencyExcludes>org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec
+                        </classpathDependencyExcludes>
+                        <classpathDependencyExcludes>javax.enterprise:cdi-api</classpathDependencyExcludes>
+                        <classpathDependencyExcludes>com.sun.faces:jsf-api</classpathDependencyExcludes>
+                        <classpathDependencyExcludes>javax.validation:validation-api</classpathDependencyExcludes>
+                        <classpathDependencyExcludes>org.hibernate.javax.persistence:hibernate-jpa-2.0-api
+                        </classpathDependencyExcludes>
+                    </classpathDependencyExcludes>
+                </configuration>
+            </plugin> 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-ejb-plugin</artifactId> 
+                <configuration>
+                    <ejbVersion>${ejb.version}</ejbVersion>
+                </configuration>
+            </plugin>
+        </plugins> 
+    </build>
 </project>

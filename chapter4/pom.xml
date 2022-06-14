@@ -13,8 +13,7 @@
     <properties>
     	<jakartaee-api.version>8.0.0</jakartaee-api.version>
         
-        <!-- JBoss dependency versions -->
-        <version.wildfly.maven.plugin>3.0.0.Final</version.wildfly.maven.plugin>
+         
         
         <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks. -->
         <version.jboss.bom>26.1.1.Final</version.jboss.bom>
@@ -31,6 +30,12 @@
         <version.failsafe.plugin>2.22.2</version.failsafe.plugin> 
         <version.war.plugin>3.3.2</version.war.plugin>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir> 
+        
+        <!-- JBoss dependency versions -->
+        <version.wildfly.maven.plugin>7.0.2.Final</version.wildfly.maven.plugin> 
+        <version.wildfly.datasources.galleon-pack>2.2.1.Final</version.wildfly.datasources.galleon-pack>
+        <version.wildfly.galleon-pack>26.1.1.Final</version.wildfly.galleon-pack>
+        <jkube.generator.from>registry.redhat.io/ubi8/openjdk-8:latest</jkube.generator.from>
     </properties>
     
     <dependencies>
@@ -56,6 +61,7 @@
 				<artifactId>wildfly-jar-maven-plugin</artifactId> 
 				<version>${version.wildfly.maven.plugin}</version>
 				<configuration>
+				      
 					<feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
@@ -73,7 +79,7 @@
                     <port>9990</port>
                     <username>admin</username>
                     <password>123456</password>
-            <!-- <jbossHome>C:/tools/wildfly-8.0.0.Final</jbossHome> -->
+            
 				</configuration>
 				<executions>
 					<execution>
@@ -81,6 +87,28 @@
 							<goal>package</goal>
 						</goals>
 					</execution>
+					<!-- https://github.com/wildfly/wildfly/blob/main/docs/src/main/asciidoc/_admin-guide/subsystem-configuration/Messaging.adoc -->
+					<!-- http://www.mastertheboss.com/jboss-frameworks/jboss-maven/configuring-maven-wildfly-plugin/ -->
+					<!-- 
+					<execution>
+                        <id>add-jms-queue</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <address>subsystem=messaging-activemq/server=default/jms-queue,jms-queue=myJmsQueue</address>
+                                    <properties>
+                                        <durable>true</durable>
+                                        <entries>!!["java:jboss/myJmsQueue", "java:jboss/myJmsQueueAlias"]</entries>
+                                    </properties>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                     -->
 				</executions>
 			</plugin>
 			 

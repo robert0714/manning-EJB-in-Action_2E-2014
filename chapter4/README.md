@@ -110,6 +110,6 @@ http://127.0.0.1:8080/chapter4-1.0-SNAPSHOT/ActionBazaarShippingRequestServlet
 ```shell
 > mvn clean package
 
-> java -jar target/chapter4-1.0-SNAPSHOT-bootable.jar -Djboss.bind.address=0.0.0.0  \
+> java -jar target/chapter4-1.0-SNAPSHOT-bootable.jar -Djboss.bind.address=0.0.0.0    \
 -Dorg.wildfly.datasources.mysql.datasource=TestDB   -Dorg.wildfly.datasources.mysql.database=cga101g1 -Dorg.wildfly.datasources.mysql.password=tibame  -Dorg.wildfly.datasources.mysql.user-name=tibame  -Dorg.wildfly.datasources.mysql.host=192.168.18.30   
 ```   
