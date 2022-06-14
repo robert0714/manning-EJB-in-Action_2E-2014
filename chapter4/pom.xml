@@ -11,87 +11,148 @@
     <name>chapter4</name>
 
     <properties>
-        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+    	<jakartaee-api.version>8.0.0</jakartaee-api.version>
+        
+        <!-- JBoss dependency versions -->
+        <version.wildfly.maven.plugin>3.0.0.Final</version.wildfly.maven.plugin>
+        
+        <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks. -->
+        <version.jboss.bom>26.1.1.Final</version.jboss.bom>
+        <wildfly.version>26.1.0.Final</wildfly.version>
+        
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.hint.deploy.server>gfv3ee6</netbeans.hint.deploy.server>
+        
+        <!-- other plugin versions -->
+        <version.compiler.plugin>3.8.1</version.compiler.plugin>
+        <version.surefire.plugin>2.22.2</version.surefire.plugin>
+        <version.failsafe.plugin>2.22.2</version.failsafe.plugin> 
+        <version.war.plugin>3.3.2</version.war.plugin>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir> 
     </properties>
     
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.5.0-SNAPSHOT</version>
+            <groupId>jakarta.platform</groupId> 
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>${jakartaee-api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Import the JPA API, we use provided scope as the API is included in WildFly / JBoss EAP -->
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-            <version>2.5.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-api</artifactId>
-            <version>7.0</version>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
-                    </compilerArguments>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${endorsed.dir}</outputDirectory>
-                            <silent>true</silent>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>javax</groupId>
-                                    <artifactId>javaee-endorsed-api</artifactId>
-                                    <version>7.0</version>
-                                    <type>jar</type>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+       <plugins>
+		    <!-- The WildFly plugin deploys your war to a local JBoss AS container -->
+			<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-jar-maven-plugin</artifactId> 
+				<version>${version.wildfly.maven.plugin}</version>
+				<configuration>
+					<feature-packs>
+                        <feature-pack>
+                            <location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
+                        </feature-pack>                        
+                    </feature-packs>
+					<layers>  
+						<layer>ejb</layer>
+						<layer>jpa</layer>
+						<layer>web-server</layer> 	
+					</layers>
+					<excluded-layers>
+						<layer>deployment-scanner</layer>
+					</excluded-layers>
+                    <hostname>localhost</hostname>
+                    <port>9990</port>
+                    <username>admin</username>
+                    <password>123456</password>
+            <!-- <jbossHome>C:/tools/wildfly-8.0.0.Final</jbossHome> -->
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			 
+            <!--Build configuration for the WAR plugin: -->
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>${version.war.plugin}</version>
+				<configuration>
+					<!-- Jakarta EE doesn't require web.xml, Maven needs to catch up! -->
+					<failOnMissingWebXml>false</failOnMissingWebXml>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${version.surefire.plugin}</version>
+				<configuration>
+					<skipTests>${ts.skipTests}</skipTests>
+					<enableAssertions>true</enableAssertions>
+							<!-- System properties to forked surefire JVM which runs clients. -->
+					<failIfNoTests>false</failIfNoTests>
+					<redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
+					<systemPropertyVariables>
+						<jboss.home>${basedir}/target/wildfly-${org.wildfly.as.version}</jboss.home>
+					</systemPropertyVariables>
+				</configuration>
+					<executions>
+
+						<!-- Disable default-test execution. -->
+						<execution>
+							<id>default-test</id>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<phase>none</phase>
+						</execution>
+						<execution>
+							<id>basic-integration-default-full.surefire</id>
+							<phase>test</phase>
+							<goals>
+								<goal>test</goal>
+							</goals>
+							<configuration>
+							
+					        <!-- Parameters to test cases. -->
+							<systemPropertyVariables
+								combine.children="append">
+								<jboss.server.config.file.name>standalone-full.xml</jboss.server.config.file.name>
+								<jboss.options>-Dee8.preview.mode=true</jboss.options>
+							</systemPropertyVariables>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
-    <repositories>
-        <repository>
-            <url>http://download.eclipse.org/rt/eclipselink/maven.repo/</url>
-            <id>eclipselink</id>
-            <layout>default</layout>
-            <name>Repository for library EclipseLink (JPA 2.1)</name>
-        </repository>
-    </repositories>
+    <!--tag::dm[]-->
+    <dependencyManagement>
+        <dependencies> 
+            <!-- JBoss distributes a complete set of Jakarta EE 8 APIs including
+                a Bill of Materials (BOM). A BOM specifies the versions of a "stack" (or 
+                a collection) of artifacts. We use this here so that we always get the correct 
+                versions of artifacts. Here we use the wildfly-jakartaee-8.0-with-tools stack
+                (you can read this as the WildFly stack of the Jakarta EE 8 APIs, with some extras
+                tools for your project, such as Arquillian for testing) -->
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <version>${version.jboss.bom}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>            
+        </dependencies>
+    </dependencyManagement>
+    <!--end::dm[]-->
 </project>

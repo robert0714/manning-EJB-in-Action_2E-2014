@@ -21,14 +21,16 @@ import javax.persistence.PersistenceContext;
  *
  * @author <a href="mailto:mjremijan@yahoo.com">Michael Remijan</a>
  */
-@MessageDriven(activationConfig = {
-  @ActivationConfigProperty(propertyName = "destinationType", 
-    propertyValue = "javax.jms.Queue"),
-  @ActivationConfigProperty(propertyName = "destinationLookup", 
-    propertyValue = "jms/ShippingRequestQueue")
+@MessageDriven(name  = "TurtleShippingMDM", activationConfig = {
+  @ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/DLQ"),
+  @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
+  @ActivationConfigProperty(propertyName = "destinationType",    propertyValue = "javax.jms.Queue")
+//  , 
+//  @ActivationConfigProperty(propertyName = "destinationLookup",  propertyValue = "jms/ShippingRequestQueue")
 })
 public class TurtleShippingRequestMessageBean
   implements MessageListener {
+	private static final Logger logger = Logger.getLogger(TurtleShippingRequestMessageBean.class.getName());
 
   @PersistenceContext()
   private EntityManager entityManager;
@@ -39,8 +41,8 @@ public class TurtleShippingRequestMessageBean
       ObjectMessage om = (ObjectMessage) message;
       Object o = om.getObject();
       ActionBazaarShippingRequest sr = (ActionBazaarShippingRequest) o;
-      Logger.getLogger(TurtleShippingRequestMessageBean.class.getName())
-        .log(Level.INFO, String.format("Got message: %s", sr));
+      
+      logger .log(Level.INFO, String.format("Got message: %s", sr));
     
       TurtleShippingRequest tr = new TurtleShippingRequest();      
       tr.setInsuranceAmount(sr.getInsuranceAmount());
@@ -50,8 +52,7 @@ public class TurtleShippingRequestMessageBean
       entityManager.persist(tr);      
 
     } catch (JMSException ex) {
-      Logger.getLogger(TurtleShippingRequestMessageBean.class.getName())
-        .log(Level.SEVERE, null, ex);
+    	logger .log(Level.SEVERE, null, ex);
     }
   }
 }
