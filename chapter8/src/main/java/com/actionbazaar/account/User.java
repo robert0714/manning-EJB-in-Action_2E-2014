@@ -17,7 +17,6 @@
  */
 package com.actionbazaar.account;
 
-import org.apache.commons.codec.binary.Base64;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -27,6 +26,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -42,7 +44,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-
+import org.apache.commons.codec.binary.Base64;
+//import org.hibernate.annotations.DiscriminatorFormula;
 /**
  *
  * @author rcuprak
@@ -51,11 +54,17 @@ import javax.persistence.Temporal;
  * Base class defining the basic attributes of a user.
  * @see com.actionbazaar.account.User
  * @see com.actionbazaar.account.Seller
+ * @see com.actionbazaar.account.Bidder
+ * @see com.actionbazaar.account.Employee
+ * 
+ * @see https://www.baeldung.com/hibernate-inheritance
  */
+
 @Entity
 @Table(name="USERS")
 @Inheritance(strategy= InheritanceType.JOINED)
 @DiscriminatorColumn(name="USER_TYPE",discriminatorType = DiscriminatorType.STRING,length = 1)
+//@DiscriminatorFormula("case when USERS is not null then 1 else 2 end")
 public abstract class User implements Serializable {
 
     /**
@@ -105,6 +114,13 @@ public abstract class User implements Serializable {
      * Address information
      */
     @Embedded
+    @AttributeOverrides(value = {
+        @AttributeOverride( name = "streetName1", column = @Column(name = "street_name")),
+        @AttributeOverride( name = "city", column = @Column(name = "city")),
+        @AttributeOverride( name = "state", column = @Column(name = "state")),
+        @AttributeOverride( name = "zipCode", column = @Column(name = "zipCode")),
+        @AttributeOverride( name = "phone", column = @Column(name = "phone"))
+    })
     private Address address;
 
     /**

@@ -15,7 +15,13 @@
 package com.actionbazaar.ws;
 
 import com.actionbazaar.model.Bid;
+import com.actionbazaar.rs.BidServiceRSImpl;
+
+import static java.util.logging.Logger.getLogger;
+
 import java.util.List;
+import java.util.logging.Logger;
+
 import javax.ejb.Stateless;
 import javax.jws.WebService;
 
@@ -25,7 +31,7 @@ import javax.jws.WebService;
 @Stateless
 @WebService(endpointInterface = "com.actionbazaar.ws.PlaceBidWS")
 public class PlaceBid implements PlaceBidWS {
-
+	private static final Logger logger = getLogger(PlaceBid.class.getName());
     /**
      * Submits a bid
      * @param userId - user id
@@ -35,6 +41,8 @@ public class PlaceBid implements PlaceBidWS {
      */
     @Override
     public long submitBid(long userId, long itemId, double bidPrice) {
+    	logger.info("submitBid.............");
+    	System.out.println("submitBid(userId: "+userId+" ,itemId: "+itemId+" ,bidPrice: "+bidPrice);
         return 0;
 
     }

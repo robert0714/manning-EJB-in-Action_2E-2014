@@ -17,29 +17,42 @@
  */
 package com.actionbazaar.rs;
 
+import static java.util.logging.Logger.getLogger;
+
+import java.util.logging.Logger;
+ 
 /**
  * BidServiceRSImpl
  */
 public class BidServiceRSImpl implements BidServiceRS {
-
+	private static final Logger logger = getLogger(BidServiceRSImpl.class.getName());
     @Override
     public void addBid(BidDTO bid) {
-        // adds a new bid
+    	logger.info("addBid.............");
+    	System.out.println("addBid.............");
     }
 
     @Override
-    public BidDTO getBid(long bidId) {
-        return null;
-    }
+	public BidDTO getBid(long bidId) {
+		logger.info("getBid: " + bidId );
+		System.out.println("getBid: " + bidId );
+		BidDTO result =new BidDTO();
+		result.setBidId(bidId);
+		return result;
+	}
 
     @Override
     public void cancelBid(long bidId) {
         // cancels a bid
+    	logger.info("cancels a bid: " + bidId );
+    	System.out.println("cancels a bid: " + bidId );
     }
 
     @Override
     public String listBids(String category, long userId, String startDate, String endDate) {
-        return "";
+		logger.info(String.format("category: %s from %s to %s", category, startDate, endDate));
+		System.out.println(String.format("category: %s from %s to %s", category, startDate, endDate));
+		return "";
     }
     
 }
