@@ -26,6 +26,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -51,6 +54,10 @@ import org.apache.commons.codec.binary.Base64;
  * Base class defining the basic attributes of a user.
  * @see com.actionbazaar.account.User
  * @see com.actionbazaar.account.Seller
+ * @see com.actionbazaar.account.Bidder
+ * @see com.actionbazaar.account.Employee
+ * 
+ * @see https://www.baeldung.com/hibernate-inheritance
  */
 @Entity
 @Table(name="USERS")
@@ -105,6 +112,13 @@ public abstract class User implements Serializable {
      * Address information
      */
     @Embedded
+    @AttributeOverrides(value = {
+        @AttributeOverride( name = "streetName1", column = @Column(name = "street_name")),
+        @AttributeOverride( name = "city", column = @Column(name = "city")),
+        @AttributeOverride( name = "state", column = @Column(name = "state")),
+        @AttributeOverride( name = "zipCode", column = @Column(name = "zipCode")),
+        @AttributeOverride( name = "phone", column = @Column(name = "phone"))
+    })
     private Address address;
 
     /**

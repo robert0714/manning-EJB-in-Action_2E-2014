@@ -22,6 +22,7 @@ import com.actionbazaar.account.Seller;
 import com.actionbazaar.model.Category;
 import com.actionbazaar.model.Item;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -63,8 +64,14 @@ public class ItemManager {
      * @return item count
      */
     public long getItemCount() {
-        Query query = entityManager.createNamedQuery("Item.count",Category.class);
-        return (Long)query.getSingleResult();
+    	//FIXME
+//        Query query = entityManager.createNamedQuery("Item.count",Item.class);
+//        BigInteger data = (BigInteger)query.getSingleResult();
+    	//createNamedQuery has bug
+    	Query query = entityManager.createNativeQuery("SELECT count(*) FROM ITEMS ");
+    	BigInteger data = (BigInteger)query.getSingleResult();
+    	
+        return data.longValue();
     }
     
     /**

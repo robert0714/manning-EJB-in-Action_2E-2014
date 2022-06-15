@@ -30,6 +30,8 @@ import javax.persistence.ManyToOne;
 
 /**
  * Billing Info
+ * Base class defining the basic attributes of a user.
+ * @see com.actionbazaar.model.CreditCard
  */
 @Entity
 @Inheritance(strategy= InheritanceType.JOINED)
