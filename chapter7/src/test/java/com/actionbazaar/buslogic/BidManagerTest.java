@@ -7,9 +7,14 @@ package com.actionbazaar.buslogic;
 import com.actionbazaar.State;
 import com.actionbazaar.account.Address;
 import com.actionbazaar.account.Bidder;
+import com.actionbazaar.account.User;
 import com.actionbazaar.buslogic.exceptions.CreditCardSystemException;
 import com.actionbazaar.model.Bid;
 import com.actionbazaar.model.Item;
+
+import static org.jboss.shrinkwrap.resolver.api.maven.Maven.resolver;
+
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,6 +28,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
+import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
 import org.junit.Before;
@@ -49,16 +55,21 @@ public class BidManagerTest {
     
     @Deployment
     public static Archive<?> createDeployment() {
-        WebArchive wa = ShrinkWrap.create(WebArchive.class, "test.war")
-            .addPackage(State.class.getPackage())
-            .addPackage(Address.class.getPackage())    
-            .addPackage(BidManager.class.getPackage())    
-            .addPackage(CreditCardSystemException.class.getPackage())   
-            .addPackage(Bid.class.getPackage())
-            .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
-            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        System.out.println(wa.toString(true));
-        return wa;
+    	WebArchive wa = ShrinkWrap.create(WebArchive.class, "chapter7-test.war")
+                .addPackage(State.class.getPackage())
+                .addPackage(User.class.getPackage())    
+                .addPackage(BidManager.class.getPackage()) 
+                .addPackage(CreditCardSystemException.class.getPackage())   
+                .addPackage(Item.class.getPackage())
+                .addAsWebInfResource(new FileAsset(new File("src/test/resources/test-persistence.xml")), "classes/META-INF/persistence.xml")
+                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+             
+            // wa .addPackage(org.hibernate.mapping.RootClass.class.getPackage()) ;
+            File[] files = resolver().loadPomFromFile("pom.xml").importRuntimeDependencies()
+    				.resolve("org.hibernate:hibernate-core:5.3.24.Final").withTransitivity().asFile();
+            wa.addAsLibraries(files); 
+            System.out.println(wa.toString(true));
+            return wa;
     }
     
     /**
