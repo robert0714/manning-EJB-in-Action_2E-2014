@@ -22,6 +22,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -30,6 +32,8 @@ import javax.persistence.ManyToOne;
 
 /**
  * Billing Info
+ * Base class defining the basic attributes of a user.
+ * @see com.actionbazaar.model.CreditCard
  */
 @Entity
 @Inheritance(strategy= InheritanceType.JOINED)
@@ -39,7 +43,7 @@ public abstract class BillingInfo implements Serializable {
     /**
      * User Id
      */
-    @Id
+    @Id @GeneratedValue(strategy= GenerationType.TABLE)
     @Column(name="BILLING_ID")
     private Long userId;
 

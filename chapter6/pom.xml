@@ -13,101 +13,120 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <netbeans.hint.j2eeVersion>1.6</netbeans.hint.j2eeVersion>
+        <maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.jboss.arquillian.drone.version>2.5.5</org.jboss.arquillian.drone.version>
+		<shrinkwrap.version>3.1.4</shrinkwrap.version>
+		<selenium.version>3.11.0</selenium.version>
+		
+		<org.wildfly.as.version>26.1.1.Final</org.wildfly.as.version> 
+		<org.wildfly.core.version>18.1.1.Final</org.wildfly.core.version>
+		<org.wildfly.arquillian.version>3.0.1.Final</org.wildfly.arquillian.version>
+		<org.wildfly.maven.plugin.version>3.0.0.Final</org.wildfly.maven.plugin.version>
+		<hibernate.search.version>5.10.12.Final</hibernate.search.version>
+		<resteasy.version>3.15.3.Final</resteasy.version>
+		<picketlink.version>2.5.5.SP12</picketlink.version>
+		 
+		<awaitility-proxy.version>3.1.6</awaitility-proxy.version>
+		<awaitility.version>4.1.1</awaitility.version>
+		
+		<!-- Arquillian 1.6.0 adds Jakarta EE 8 and JUnit 4 support-->
+        <arquillian-bom.version>1.6.0.Final</arquillian-bom.version>
+
+		<!-- https://github.com/flashboss/rubia-forums/blob/2.2.3/pom.xml is latest jdk8 version -->
+		<rubiaforums.version>2.2.3</rubiaforums.version>
+		<subethasmtp.version>3.1.7</subethasmtp.version>
+		<maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
+		<maven.ejb.plugin.version>3.2.1</maven.ejb.plugin.version>
+		<replacer.plugin.version>1.5.3</replacer.plugin.version>
+		<testLogToFile>true</testLogToFile>
+		<maven.deploy.skip>true</maven.deploy.skip>
+		<ts.skipTests>${skipTests}</ts.skipTests>
+		<enforcer.skip>true</enforcer.skip>
+		<jakartaee-api.version>8.0.0</jakartaee-api.version> 
+		<version.shrinkwrap.resolvers>3.1.4</version.shrinkwrap.resolvers>
+		 <!-- Protocol to use for communication with remote maven repositories.
+             You can set to 'http' if you are using a maven proxy and 'https'
+             interferes with that. Use 'https' for builds that will be released
+             to non-snapshot public maven repos -->
+        <maven.repository.protocol>https</maven.repository.protocol>
+        <!-- The full remote maven repo URL; can be overridden via -D for special use cases -->
+        <maven.repository.url>${maven.repository.protocol}://repository.jboss.org/nexus/content/groups/public/</maven.repository.url>
     </properties>
     <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-        <plugins>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>  
-                    <forkMode>always</forkMode>  
-                    <systemPropertyVariables>
-                        <java.util.logging.config.file>
-                            ${project.build.testOutputDirectory}/logging.properties
-                        </java.util.logging.config.file>
-                        <derby.stream.error.file>
-                            ${project.build.directory}/derby.log
-                        </derby.stream.error.file>
-                    </systemPropertyVariables>
-                    <classpathDependencyExcludes>  
-                        <classpathDependencyExcludes>                 
-                            javax.servlet:servlet-api  
-                        </classpathDependencyExcludes>  
-                        <classpathDependencyExcludes>  
-                            org.apache.felix:javax.servlet  
-                        </classpathDependencyExcludes>  
-                    </classpathDependencyExcludes>  
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
-                </configuration>
-            </plugin>
-        </plugins>
+         <!-- maybe  keypoint to Test temp wilfly  -->
+        <defaultGoal>package</defaultGoal>
+        <finalName>chapter6</finalName> 
     </build>
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-jakartaee8-with-tools</artifactId>
+                <version>${org.wildfly.as.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
-                <version>1.0.0.Final</version>
+                <version>${arquillian-bom.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+            <dependency>
+				<groupId>org.wildfly.arquillian</groupId>
+				<artifactId>wildfly-arquillian-parent</artifactId>
+				<version>${org.wildfly.arquillian.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>			
         </dependencies>
     </dependencyManagement>
     <dependencies>
         <!-- Application Dependencies -->
         <dependency>
             <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.7</version>
+            <artifactId>commons-codec</artifactId> 
+        </dependency>
+        
+         <dependency>
+            <groupId>jakarta.platform</groupId>
+            <artifactId>jakarta.jakartaee-api</artifactId>
+            <version>${jakartaee-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- Import the CDI API  -->
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
         </dependency>
         
         <!--
             Persistence
-        -->
+        --> 
         <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>eclipselink</artifactId>
-            <version>2.3.2</version>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>2.0.3</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
-            <version>2.3.2</version>
-            <scope>provided</scope>
-        </dependency>        
-        <!-- Arquillian for unit testing -->
+        
+       <!-- Optional, but highly recommended -->
+        <!-- Arquillian allows you to test enterprise code such as EJBs and 
+            Transactional(JTA) JPA from JUnit/TestNG -->
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
+        </dependency>       
+        
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-servlet</artifactId>
+            <scope>test</scope>               
         </dependency>
 
         <!-- JUnit -->
@@ -117,37 +136,188 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-spi</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-api-maven</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-spi-maven</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-core</artifactId>
+		    <scope>provider</scope>
+		</dependency>
     </dependencies>
     
     <profiles>
-        <profile>
-            <id>arquillian-glassfish-embedded</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+		<profile>
+			<id>basic.integration.tests.profile</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
             <dependencies>
+                <!-- keypoint to Test temp wilfly  -->
                 <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
-                    <version>1.0.0.CR3</version>
+                    <groupId>org.wildfly.arquillian</groupId>
+                    <artifactId>wildfly-arquillian-container-managed</artifactId>
                     <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish.main.extras</groupId>
-                    <artifactId>glassfish-embedded-all</artifactId>
-                    <version>3.1.2</version>
-                    <scope>provided</scope>
-                </dependency>
+                </dependency> 
             </dependencies>
-        </profile>
-    </profiles>
+  
+			<!-- Server configuration executions. -->
+			<build>			    
+				<testResources>
+					<testResource>
+						<directory>src/test/java</directory>
+						<excludes>
+							<exclude>**/*.java</exclude>
+						</excludes>
+					</testResource>
+				</testResources>                
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>unpack</id>
+								<phase>process-test-classes</phase>
+								<goals>
+									<goal>unpack</goal>
+								</goals>
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>org.wildfly</groupId>
+											<artifactId>wildfly-dist</artifactId>
+											<version>${org.wildfly.as.version}</version>
+											<type>zip</type>
+											<overWrite>false</overWrite>
+											<outputDirectory>target</outputDirectory>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+
+					<!-- Sets general surefire system properties. These can be overridden 
+						by inheriting plugin configurations. -->
+
+					<plugin>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>${maven.surefire.plugin.version}</version>
+						<configuration>
+							<skipTests>${ts.skipTests}</skipTests>
+							<enableAssertions>true</enableAssertions>
+							<!-- System properties to forked surefire JVM which runs clients. -->
+							<failIfNoTests>false</failIfNoTests>
+							<redirectTestOutputToFile>${testLogToFile}</redirectTestOutputToFile>
+							<systemPropertyVariables>
+								<jboss.home>${basedir}/target/wildfly-${org.wildfly.as.version}</jboss.home>
+							</systemPropertyVariables>
+						</configuration>
+						<executions>
+
+							<!-- Disable default-test execution. -->
+							<execution>
+								<id>default-test</id>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<phase>none</phase>
+							</execution>
+							<execution>
+								<id>basic-integration-default-full.surefire</id>
+								<phase>test</phase>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<configuration>
+									<!-- Tests to execute. Overriden in webProfileExclusion.profile 
+										. -->
+									<includes>
+										<include>com/actionbazaar/buslogic/*Test.java</include>
+									</includes>
+
+									<!-- Parameters to test cases. -->
+									<systemPropertyVariables
+										combine.children="append">
+										<jboss.server.config.file.name>standalone-full.xml</jboss.server.config.file.name>
+										<jboss.options>-Dee8.preview.mode=true</jboss.options>
+									</systemPropertyVariables>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin> 
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
     
     <repositories>
         <repository>
-            <url>http://download.eclipse.org/rt/eclipselink/maven.repo/</url>
-            <id>eclipselink</id>
+            <id>java.net2</id>
+            <name>Repository hosting the jee6 artifacts</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>        
+        <repository>
+            <id>Glassfish</id>
+            <name>Glassfish Repository</name>
+            <url>http://download.java.net/maven/glassfish</url>
+        </repository>
+        <!-- the JBoss community and Red Hat GA Maven repositories -->
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
             <layout>default</layout>
-            <name>Repository for library EclipseLink (JPA 2.0)</name>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Repository Group</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

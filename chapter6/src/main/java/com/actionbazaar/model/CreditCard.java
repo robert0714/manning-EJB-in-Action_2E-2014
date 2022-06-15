@@ -44,7 +44,9 @@ public class CreditCard extends BillingInfo implements Serializable {
     /**
      * Credit card identifier
      */
-    @Id @GeneratedValue
+//    @Id 
+	//If creditCardId is primary key . It is the Confilct between  CreditCard,  BillingInfo
+    @GeneratedValue
     private Long creditCardId;
 
     /**

@@ -36,8 +36,8 @@
          <!-- Official Maven Plugins -->
          <maven-dependency-plugin.version>3.3.0</maven-dependency-plugin.version> 
          
-         <!-- Arquillian 1.7.0 adds Jakarta EE 9 and JUnit 5 support-->
-        <arquillian-bom.version>1.7.0.Alpha10</arquillian-bom.version>
+         <!-- Arquillian 1.6.0 adds Jakarta EE 8 and JUnit 4 support-->
+        <arquillian-bom.version>1.6.0.Final</arquillian-bom.version>
         <junit-jupiter.version>5.8.2</junit-jupiter.version>
         
     </properties>
