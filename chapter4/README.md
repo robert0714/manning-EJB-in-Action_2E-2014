@@ -100,7 +100,7 @@ http://127.0.0.1:8080/chapter4-1.0-SNAPSHOT/ActionBazaarShippingRequestServlet
 # Wildfly Boottable Jar
 1. Documents About Wildfly Boottable Jar :
    * https://developers.redhat.com/articles/2022/01/26/build-bootable-jar-cloud-ready-microservices
-   * https://docs.wildfly.org/26/Bootable_Guide.html
+   * https://docs.wildfly.org/22/Bootable_Guide.html
    * https://docs.microsoft.com/en-us/azure/openshift/howto-deploy-java-jboss-enterprise-application-platform-app
 1. JNDI configuration references :
    * https://github.com/wildfly-extras/wildfly-datasources-galleon-pack/blob/main/testsuite/bootablejar/pom.xml
@@ -110,6 +110,5 @@ http://127.0.0.1:8080/chapter4-1.0-SNAPSHOT/ActionBazaarShippingRequestServlet
 ```shell
 > mvn clean package
 
-> java -jar target/chapter4-1.0-SNAPSHOT-bootable.jar -Djboss.bind.address=0.0.0.0    \
--Dorg.wildfly.datasources.mysql.datasource=TestDB   -Dorg.wildfly.datasources.mysql.database=cga101g1 -Dorg.wildfly.datasources.mysql.password=tibame  -Dorg.wildfly.datasources.mysql.user-name=tibame  -Dorg.wildfly.datasources.mysql.host=192.168.18.30   
+> java -jar target/chapter4-1.0-SNAPSHOT-bootable.jar -Djboss.bind.address=0.0.0.0 -Dorg.wildfly.datasources.h2database.datasource=ExampleDS  
 ```   

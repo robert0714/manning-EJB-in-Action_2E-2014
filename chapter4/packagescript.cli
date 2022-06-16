@@ -1,0 +1,21 @@
+/system-property=name:add(value=john)
+### /extension=org.jboss.as.jsr77:add
+/extension=org.wildfly.iiop-openjdk:add
+### /extension=org.wildfly.extension.messaging-activemq:add
+
+### https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html/configuring_messaging/getting_started
+### https://github.com/wildfly-extras/wildfly-jar-maven-plugin/tree/master/examples/scripts
+### https://docs.wildfly.org/26/wildscribe/subsystem/messaging-activemq/index.html
+
+
+### /subsystem=messaging-activemq:read-resource-description(recursive=true)
+
+
+### <pooled-connection-factory name="activemq-ra" entries="java:/JmsXA java:jboss/DefaultJMSConnectionFactory" connectors="in-vm" transaction="xa"/>
+
+### /subsystem=messaging-activemq/server=default/pooled-connection-factory=activemq-ra:add(entries=[java:/JmsXA java:jboss/DefaultJMSConnectionFactory],connectors=[in-vm])     
+
+###  jms-queue add --queue-address=DLQ --entries=java:/jms/queue/DLQ
+###  jms-queue add --queue-address=ExpiryQueue --entries=java:/jms/queue/ExpiryQueue 
+### /subsystem=messaging-activemq/server=default:add()
+### https://stackoverflow.com/questions/24921640/how-to-set-up-messaging-subsystem-using-cli-in-wildfly

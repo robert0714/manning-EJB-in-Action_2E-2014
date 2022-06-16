@@ -13,11 +13,11 @@
     <properties>
     	<jakartaee-api.version>8.0.0</jakartaee-api.version>
         
-         
-        
         <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks. -->
-        <version.jboss.bom>26.1.1.Final</version.jboss.bom>
-        <wildfly.version>26.1.0.Final</wildfly.version>
+        <version.jboss.bom>22.0.1.Final</version.jboss.bom>
+        <!-- For using wildfly-jar-maven-plugin to generating messaging-activemq layer  when jboss-eap-7.4(wildfly 22.0.1.Final) work ok /but wildfly(23+) not  -->
+        <!-- <version.jboss.bom>26.1.1.Final</version.jboss.bom> -->
+        <wildfly.version>${version.jboss.bom}</wildfly.version> 
         
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -34,7 +34,7 @@
         <!-- JBoss dependency versions -->
         <version.wildfly.maven.plugin>7.0.2.Final</version.wildfly.maven.plugin> 
         <version.wildfly.datasources.galleon-pack>2.2.1.Final</version.wildfly.datasources.galleon-pack>
-        <version.wildfly.galleon-pack>26.1.1.Final</version.wildfly.galleon-pack>
+        
         <jkube.generator.from>registry.redhat.io/ubi8/openjdk-8:latest</jkube.generator.from>
     </properties>
     
@@ -60,26 +60,48 @@
 				<groupId>org.wildfly.plugins</groupId>
 				<artifactId>wildfly-jar-maven-plugin</artifactId> 
 				<version>${version.wildfly.maven.plugin}</version>
-				<configuration>
-				      
+				<configuration>				     		      
 					<feature-packs>
                         <feature-pack>
                             <location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
-                        </feature-pack>                        
+                        </feature-pack>
+						<feature-pack>
+                            <groupId>org.wildfly</groupId>
+                            <artifactId>wildfly-datasources-galleon-pack</artifactId>
+                            <version>${version.wildfly.datasources.galleon-pack}</version>
+                        </feature-pack>
                     </feature-packs>
 					<layers>  
 						<layer>ejb</layer>
 						<layer>jpa</layer>
-						<layer>web-server</layer> 	
+						<layer>web-server</layer>
+                        <!-- <layer>legacy-security</layer> -->
+						<layer>remote-activemq</layer>
+						<layer>messaging-activemq</layer>
+						<!-- 	https://github.com/wildfly-extras/wildfly-datasources-galleon-pack/blob/main/testsuite/bootablejar/pom.xml -->	
+						<layer>datasources</layer>
+						 <layer>h2database-datasource</layer>
 					</layers>
+					<!--  -->
 					<excluded-layers>
 						<layer>deployment-scanner</layer>
 					</excluded-layers>
+					
                     <hostname>localhost</hostname>
                     <port>9990</port>
                     <username>admin</username>
                     <password>123456</password>
-            
+                    <!-- http://www.mastertheboss.com/eclipse/eclipse-microservices/how-to-execute-cli-scripts-in-wildfly-bootable-jar/ -->
+            		<cli-sessions>
+		                <cli-session>
+		                    <script-files>
+								<!-- <script>packagescript.cli</script> 
+		                        <script>1-add-messaging-extension-and-subsystem.cli</script>-->
+		                        <script>2-add-messaging-server.cli</script>
+		                        <!-- <script>3-fix-security.cli</script>-->
+		                    </script-files>
+		                </cli-session>
+		            </cli-sessions>
 				</configuration>
 				<executions>
 					<execution>
@@ -89,29 +111,10 @@
 					</execution>
 					<!-- https://github.com/wildfly/wildfly/blob/main/docs/src/main/asciidoc/_admin-guide/subsystem-configuration/Messaging.adoc -->
 					<!-- http://www.mastertheboss.com/jboss-frameworks/jboss-maven/configuring-maven-wildfly-plugin/ -->
-					<!-- 
-					<execution>
-                        <id>add-jms-queue</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>add-resource</goal>
-                        </goals>
-                        <configuration>
-                            <resources>
-                                <resource>
-                                    <address>subsystem=messaging-activemq/server=default/jms-queue,jms-queue=myJmsQueue</address>
-                                    <properties>
-                                        <durable>true</durable>
-                                        <entries>!!["java:jboss/myJmsQueue", "java:jboss/myJmsQueueAlias"]</entries>
-                                    </properties>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                     -->
+					
 				</executions>
-			</plugin>
-			 
+			</plugin> 
+			
             <!--Build configuration for the WAR plugin: -->
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>

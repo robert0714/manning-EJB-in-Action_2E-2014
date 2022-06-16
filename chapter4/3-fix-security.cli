@@ -1,0 +1,5 @@
+# https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html/configuring_messaging/configuring_messaging_security
+/subsystem=messaging-activemq/server=default:write-attribute(name=security-domain, value=mySecurityDomain)
+
+
+/:reload

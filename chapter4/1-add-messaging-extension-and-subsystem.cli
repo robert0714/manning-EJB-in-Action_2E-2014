@@ -1,0 +1,13 @@
+# https://stackoverflow.com/questions/24921640/how-to-set-up-messaging-subsystem-using-cli-in-wildfly
+# jboss-eap-7.4 wildfly  work ok  
+ batch
+
+# Add messaging extension
+/extension=org.wildfly.extension.messaging-activemq:add()
+
+# Add messaging subsystem
+/subsystem=messaging-activemq:add
+
+ run-batch
+
+/:reload
