@@ -1,5 +1,5 @@
 # https://stackoverflow.com/questions/24921640/how-to-set-up-messaging-subsystem-using-cli-in-wildfly
-# jboss-eap-7.4(wildfly 22.0.1.Final) work ok /but wildfly(23+) not 
+# jboss-eap-7.4(wildfly 22.0.1.Final) work[legacy-security] ok /but wildfly(23+) not 
 # batch
 
 # Add messaging server with default configuration, allow only in-VM connectors

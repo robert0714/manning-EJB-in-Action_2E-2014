@@ -13,10 +13,11 @@
     <properties>
     	<jakartaee-api.version>8.0.0</jakartaee-api.version>
         
-        <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks. -->
-        <version.jboss.bom>22.0.1.Final</version.jboss.bom>
+        <!-- Define the version of the JBoss BOMs we want to import to specify tested stacks.
+        <version.jboss.bom>22.0.1.Final</version.jboss.bom> -->
         <!-- For using wildfly-jar-maven-plugin to generating messaging-activemq layer  when jboss-eap-7.4(wildfly 22.0.1.Final) work ok /but wildfly(23+) not  -->
-        <!-- <version.jboss.bom>26.1.1.Final</version.jboss.bom> -->
+        <!--  -->
+        <version.jboss.bom>26.1.1.Final</version.jboss.bom>
         <wildfly.version>${version.jboss.bom}</wildfly.version> 
         
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -75,9 +76,11 @@
 						<layer>ejb</layer>
 						<layer>jpa</layer>
 						<layer>web-server</layer>
-                        <!-- <layer>legacy-security</layer> -->
-						<layer>remote-activemq</layer>
-						<layer>messaging-activemq</layer>
+						<layer>core-tools</layer>
+						<layer>elytron</layer>
+                       <!--  <layer>legacy-security</layer> -->
+					    <!-- <layer>remote-activemq</layer>
+						<layer>messaging-activemq</layer> -->
 						<!-- 	https://github.com/wildfly-extras/wildfly-datasources-galleon-pack/blob/main/testsuite/bootablejar/pom.xml -->	
 						<layer>datasources</layer>
 						 <layer>h2database-datasource</layer>
@@ -96,9 +99,13 @@
 		                <cli-session>
 		                    <script-files>
 								<!-- <script>packagescript.cli</script> 
-		                        <script>1-add-messaging-extension-and-subsystem.cli</script>-->
-		                        <script>2-add-messaging-server.cli</script>
-		                        <!-- <script>3-fix-security.cli</script>-->
+		                        <script>1-add-messaging-extension-and-subsystem.cli</script>--> 
+		                        
+		                        <!-- for legacy-security
+		                        <script>2-add-messaging-server.cli</script>--> 
+		                        
+		                        <!-- for elytron --> 
+		                        <script>2-add-messaging-serverV2.cli</script>
 		                    </script-files>
 		                </cli-session>
 		            </cli-sessions>

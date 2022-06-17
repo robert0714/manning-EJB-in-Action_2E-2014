@@ -111,4 +111,12 @@ http://127.0.0.1:8080/chapter4-1.0-SNAPSHOT/ActionBazaarShippingRequestServlet
 > mvn clean package
 
 > java -jar target/chapter4-1.0-SNAPSHOT-bootable.jar -Djboss.bind.address=0.0.0.0 -Dorg.wildfly.datasources.h2database.datasource=ExampleDS  
-```   
+
+```
+
+
+Browser test url  ``http://127.0.0.1:8080/ActionBazaarShippingRequestServlet`` 
+
+
+You can use [reverse tool ](http://www.mastertheboss.com/jbossas/jboss-script/reverse-engineer-your-jboss-as-wildfly-configuration-to-cli/) to generate cli .
+ 
