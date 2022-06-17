@@ -75,8 +75,7 @@
 					<layers>  
 						<layer>ejb</layer>
 						<layer>jpa</layer>
-						<layer>web-server</layer>
-						<layer>core-tools</layer>
+						<layer>web-server</layer> 
 						<layer>elytron</layer>
                        <!--  <layer>legacy-security</layer> -->
 					    <!-- <layer>remote-activemq</layer>
