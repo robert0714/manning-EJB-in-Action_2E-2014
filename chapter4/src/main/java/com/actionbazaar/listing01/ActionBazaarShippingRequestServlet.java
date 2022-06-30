@@ -8,7 +8,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import javax.annotation.Resource;
-import javax.inject.Inject; 
+import javax.inject.Inject;
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSConnectionFactory;
 import javax.jms.JMSContext;
 import javax.jms.JMSProducer;
@@ -19,26 +20,67 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse; 
+import static java.util.logging.Level.SEVERE;
+import static java.util.logging.Logger.getLogger;
+import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
+import javax.jms.Connection;
+import javax.jms.ConnectionMetaData;
+import javax.jms.JMSException; 
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+ 
 /**
  *
  * @author <a href="mailto:mjremijan@yahoo.com">Michael Remijan</a>
  */
-@WebServlet(name = "ActionBazaarShippingRequestServlet", urlPatterns = {"/ActionBazaarShippingRequestServlet"})
+@WebServlet(name = "ActionBazaarShippingRequestServlet", urlPatterns = {"/ActionBazaarShippingRequestServlet"}) 
 public class ActionBazaarShippingRequestServlet extends HttpServlet {
   
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -9159556280355152906L;
+	
+	private static final Logger logger = getLogger(ActionBazaarShippingRequestServlet.class.getName());
 
+		
+    private String jmsVersion;
+    
+    @Resource(lookup = "java:/jms/remoteCF")
+//  @Resource(lookup = "java:/amq/ConnectionFactory")
+//  @Resource(lookup = "java:/ConnectionFactory")
+    private ConnectionFactory cf ; 
+    
+
+    @JMSConnectionFactory("java:/jms/remoteCF")
+//	@JMSConnectionFactory("java:/amq/ConnectionFactory")
+//	@JMSConnectionFactory("java:/ConnectionFactory")    
 	@Inject
-	@JMSConnectionFactory("java:/ConnectionFactory")
-	private JMSContext context;
+	private JMSContext context;	
 
-	@Resource(mappedName=  "java:/jms/queue/DLQ")
+//	@Resource(lookup = "java:/queue/simpleMDBTestQueue")
+//	@Resource(mappedName=  "java:/jms/queue/DLQ")
+    @Resource(lookup = "java:/queue/testQueueRemoteArtemis")
 	private Queue destination;
-
+	
+    @PostConstruct
+    protected void postConstruct() {
+		try (Connection connection = cf.createConnection()) {
+			final ConnectionMetaData cmd = connection.getMetaData();
+			logger.info("------------------------------");
+			if (cmd != null) { 
+				jmsVersion = cmd.getJMSVersion();
+				logger.info("jms version: "+jmsVersion);
+			}
+		} catch (JMSException ex) {
+			logger.log(SEVERE, "Exception sending msg", ex);
+		} finally {
+			logger.info("------------end--------------");
+		}
+    }
+    
 	/**
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -50,13 +92,10 @@ public class ActionBazaarShippingRequestServlet extends HttpServlet {
 			shippingRequest.setItem("item");
 			shippingRequest.setShippingAddress("address");
 			shippingRequest.setShippingMethod("method");
-			shippingRequest.setInsuranceAmount(100.50);
-
-			final ObjectMessage om = context.createObjectMessage();
-			om.setObject(shippingRequest);
-
-			final JMSProducer producer = context.createProducer();
-			producer.send(destination, om);
+			shippingRequest.setInsuranceAmount(100.50); 
+			
+			sendMsg(shippingRequest);
+			
 
 		} catch (Throwable t) {
 			oops = t;
@@ -128,4 +167,57 @@ public class ActionBazaarShippingRequestServlet extends HttpServlet {
 	public String getServletInfo() {
 		return "Short description";
 	}// </editor-fold>
+    protected void sendMsg(final ActionBazaarShippingRequest shippingRequest ) {
+    	
+		switch(jmsVersion) {
+    	case "1.1":
+    		sendMsgByJMS11(shippingRequest);
+    		break;
+    	default:
+    		sendMsgByJMS2(shippingRequest);
+    		break;    	
+    	}
+    }
+    protected void sendMsgByJMS11(final ActionBazaarShippingRequest shippingRequest) { 
+    	
+		try (Connection connection = cf.createConnection()) {			
+            final Session session = connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
+            
+            final ObjectMessage om = session.createObjectMessage();
+    		om.setObject(shippingRequest);
+            final MessageProducer producer = session.createProducer(destination);             
+            producer.send(om);
+        }catch (JMSException ex) {
+            logger.log(SEVERE, "Exception sending msg", ex);
+        }
+	}
+    protected void sendMsgByJMS2(final ActionBazaarShippingRequest shippingRequest) { 
+    	
+		try {			
+			 JMSContext jmsContext = getJMSContext();
+	   		 final JMSProducer producer = jmsContext.createProducer();
+	   		 logger.info("jms version: "+jmsVersion);
+	   		 final ObjectMessage om =  jmsContext.createObjectMessage();
+	   		 om.setObject(shippingRequest);
+	   		 producer.send(destination, om);
+        }catch (JMSException ex) {
+            logger.log(SEVERE, "Exception sending msg", ex);
+        }
+	}
+   
+    /**
+     * Because using wildfly-jar-maven-plugin ,we discover that  injecting JMSContext would be null.<br/>
+     * we use JMS 1.1(ConnectionFactory) to get JMSContext.<br/>
+     * Sending messages to ActiveMQ can be done via the JMS API. At the moment, ActiveMQ 5.x only supports the JMS 1.1 API.
+     * **/
+	protected JMSContext getJMSContext() {
+		if (this.context != null) {
+			return this.context;
+		} else if(cf!=null) {
+			return cf.createContext();
+		}else {
+			logger.info("Both ConnectionFactory & JMSContext are null.");
+			return null;
+		}
+	} 
 }

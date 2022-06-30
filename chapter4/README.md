@@ -107,6 +107,7 @@ http://127.0.0.1:8080/chapter4-1.0-SNAPSHOT/ActionBazaarShippingRequestServlet
    * https://github.com/wildfly-extras/wildfly-datasources-galleon-pack/blob/main/doc/mysql/README.md
 
 ## executin command line
+
 ```shell
 > mvn clean package
 
@@ -117,6 +118,19 @@ http://127.0.0.1:8080/chapter4-1.0-SNAPSHOT/ActionBazaarShippingRequestServlet
 
 Browser test url  ``http://127.0.0.1:8080/ActionBazaarShippingRequestServlet`` 
 
+If you wanna test external AMQ
+
+```shell
+> mvn clean package -Pexternal-AMQ
+> mvn clean package -Ppooled-connection-factory
+
+> java -jar target/chapter4-bootable.jar -Djboss.bind.address=0.0.0.0 -Dorg.wildfly.datasources.h2database.datasource=ExampleDS   -Damq.broker.userName=admin  -Damq.broker.passWord=admin -Damq.broker.url=tcp://localhost:61616?jms.rmIdFromConnectionId=true 
+
+
+>  java -jar target/chapter4-bootable.jar  --properties dev.properties 
+```
+
+
 
 You can use [reverse tool ](http://www.mastertheboss.com/jbossas/jboss-script/reverse-engineer-your-jboss-as-wildfly-configuration-to-cli/) to generate cli .
  
@@ -124,13 +138,11 @@ You can use [reverse tool ](http://www.mastertheboss.com/jbossas/jboss-script/re
  # Remote Access Artemis MQ
  ## Run Artemis MQ as Docker Image
  docker cli:
+ 
  ```shell
  docker run -e AMQ_USER=admin -e AMQ_PASSWORD=admin -p8161:8161 --name artemis quay.io/artemiscloud/activemq-artemis-broker
  ```
- As we have exported the port 8161, we are also able to connect to the Web console at localhost:8161:
- ``http://192.168.18.30:8161`` 
+ 
+ As we have exported the port 8161, we are also able to connect to the Web console at localhost:8161:  ``http://192.168.18.30:8161`` 
 
- ### Documentation
-* OCP:  https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/configuring_messaging/index#using_jboss_amq_for_remote_jakarta_messaging_communication
-
-* on-premise: https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.4/html-single/configuring_messaging/index#configure_remote_activemq_server_resources_using_mgmt_console
+ 

@@ -17,17 +17,24 @@ import javax.jms.ObjectMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.jboss.ejb3.annotation.ResourceAdapter;
+
 /**
  *
  * @author <a href="mailto:mjremijan@yahoo.com">Michael Remijan</a>
  */
-@MessageDriven(name  = "TurtleShippingMDM", activationConfig = {
-  @ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/DLQ"),
+@MessageDriven(name  = "TurtleShippingMDM", activationConfig = {  
   @ActivationConfigProperty(propertyName = "acknowledgeMode", propertyValue = "Auto-acknowledge"),
-  @ActivationConfigProperty(propertyName = "destinationType",    propertyValue = "javax.jms.Queue")
+  @ActivationConfigProperty(propertyName = "useJNDI", propertyValue = "false"),
+  @ActivationConfigProperty(propertyName = "destinationType",    propertyValue = "javax.jms.Queue"),
+//  @ActivationConfigProperty(propertyName = "destination", propertyValue = "simpleMDBTestQueue")
+@ActivationConfigProperty(propertyName = "destination", propertyValue = "testQueueRemoteArtemis")
+//  @ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/DLQ")
 //  , 
 //  @ActivationConfigProperty(propertyName = "destinationLookup",  propertyValue = "jms/ShippingRequestQueue")
 })
+//If you use pooled-connection-factory,you need to set the ResourceAdapter.
+@ResourceAdapter("remote-artemis")
 public class TurtleShippingRequestMessageBean
   implements MessageListener {
 	private static final Logger logger = Logger.getLogger(TurtleShippingRequestMessageBean.class.getName());

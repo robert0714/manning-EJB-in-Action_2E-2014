@@ -52,9 +52,16 @@
             <artifactId>jakarta.persistence-api</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.ejb3</groupId>
+            <artifactId>jboss-ejb3-ext-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+         
     </dependencies>
 
     <build>
+    	<finalName>${artifactId}</finalName>    
        <plugins>
 		    <!-- The WildFly plugin deploys your war to a local JBoss AS container -->
 			<plugin>
@@ -144,7 +151,6 @@
 					</systemPropertyVariables>
 				</configuration>
 					<executions>
-
 						<!-- Disable default-test execution. -->
 						<execution>
 							<id>default-test</id>
@@ -192,4 +198,130 @@
         </dependencies>
     </dependencyManagement>
     <!--end::dm[]-->
+	<profiles>
+		<profile>
+			<id>external-AMQ</id>
+			<build>
+			    <finalName>${project.artifactId}</finalName>
+				<plugins>
+		            <plugin>
+		                <artifactId>maven-dependency-plugin</artifactId>
+		                <configuration>
+		                    <transitive>false</transitive>
+		                    <artifactItems>
+		                        <artifactItem>
+		                            <groupId>org.apache.activemq</groupId>
+		                            <artifactId>activemq-rar</artifactId>
+		                            <version>5.16.5</version>
+		                            <type>rar</type>
+		                            <overWrite>true</overWrite>
+		                            <outputDirectory>${project.build.directory}/</outputDirectory>
+		                            <destFileName>activemq-rar-5.16.5.rar</destFileName>
+		                        </artifactItem>
+		                    </artifactItems>
+		                </configuration>
+		                <executions>
+		                    <execution>
+		                        <goals>
+		                            <goal>copy</goal>
+		                        </goals>
+		                    </execution>
+		                </executions>
+		            </plugin>
+					<plugin>
+						<groupId>org.wildfly.plugins</groupId>
+						<artifactId>wildfly-jar-maven-plugin</artifactId>
+						<version>${version.wildfly.maven.plugin}</version>
+						<configuration>
+							<feature-packs>
+								<feature-pack>
+									<location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
+								</feature-pack>
+								<feature-pack>
+									<groupId>org.wildfly</groupId>
+									<artifactId>wildfly-datasources-galleon-pack</artifactId>
+									<version>${version.wildfly.datasources.galleon-pack}</version>
+								</feature-pack>
+							</feature-packs>
+							<layers>
+								<layer>ejb</layer>
+								<layer>jpa</layer>
+								<layer>web-server</layer>
+								<layer>resource-adapters</layer>
+								<layer>datasources</layer>
+								<layer>h2database-datasource</layer>
+							</layers> 
+                            <excluded-layers>
+								<layer>deployment-scanner</layer>
+							</excluded-layers>
+		            		<cli-sessions>
+				                <cli-session>
+				                    <script-files>
+				                        <script>4-resource-adapter-amq.cli</script>
+				                    </script-files>
+				                </cli-session>
+				            </cli-sessions>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>package</goal>
+								</goals>
+							</execution>					
+						</executions>
+					</plugin> 
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>pooled-connection-factory</id>
+			<build>
+			    <finalName>${project.artifactId}</finalName>
+				<plugins>		            
+					<plugin>
+						<groupId>org.wildfly.plugins</groupId>
+						<artifactId>wildfly-jar-maven-plugin</artifactId>
+						<version>${version.wildfly.maven.plugin}</version>
+						<configuration>
+							<feature-packs>
+								<feature-pack>
+									<location>wildfly@maven(org.jboss.universe:community-universe)#${wildfly.version}</location>
+								</feature-pack>
+								<feature-pack>
+									<groupId>org.wildfly</groupId>
+									<artifactId>wildfly-datasources-galleon-pack</artifactId>
+									<version>${version.wildfly.datasources.galleon-pack}</version>
+								</feature-pack>
+							</feature-packs>
+							<layers>
+							    <layer>elytron</layer>
+								<layer>ejb</layer>
+								<layer>jpa</layer>
+								<layer>web-server</layer>
+								<layer>datasources</layer>
+								<layer>h2database-datasource</layer>
+							</layers> 
+                            <excluded-layers>
+								<layer>deployment-scanner</layer>
+							</excluded-layers>
+		            		<cli-sessions>
+				                <cli-session>
+				                    <script-files>
+				                        <script>3-pooled-connection-factory.cli</script>
+				                    </script-files>
+				                </cli-session>
+				            </cli-sessions>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>package</goal>
+								</goals>
+							</execution>					
+						</executions>
+					</plugin> 
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
