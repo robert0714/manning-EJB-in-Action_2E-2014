@@ -48,21 +48,21 @@ public class ActionBazaarShippingRequestServlet extends HttpServlet {
 		
     private String jmsVersion;
     
-    @Resource(lookup = "java:/jms/remoteCF") //for pooled-connection-factory
+//    @Resource(lookup = "java:/jms/remoteCF") //for pooled-connection-factory
 //  @Resource(lookup = "java:/amq/ConnectionFactory")//for resource-adapter-amq
-//  @Resource(lookup = "java:/ConnectionFactory")//adjusted tutorilas
+  @Resource(lookup = "java:/ConnectionFactory")//adjusted tutorilas
     private ConnectionFactory cf ; 
     
 
-    @JMSConnectionFactory("java:/jms/remoteCF") //for pooled-connection-factory
+//    @JMSConnectionFactory("java:/jms/remoteCF") //for pooled-connection-factory
 //	@JMSConnectionFactory("java:/amq/ConnectionFactory")//for resource-adapter-amq
-//	@JMSConnectionFactory("java:/ConnectionFactory")  //adjusted tutorilas  
+	@JMSConnectionFactory("java:/ConnectionFactory")  //adjusted tutorilas  
 	@Inject
 	private JMSContext context;	
 
 //	@Resource(lookup = "java:/queue/simpleMDBTestQueue")//for resource-adapter-amq
-//	@Resource(mappedName=  "java:/jms/queue/DLQ")//adjusted tutorilas
-    @Resource(lookup = "java:/queue/testQueueRemoteArtemis")//for pooled-connection-factory
+	@Resource(mappedName=  "java:/jms/queue/DLQ")//adjusted tutorilas
+//    @Resource(lookup = "java:/queue/testQueueRemoteArtemis")//for pooled-connection-factory
 	private Queue destination;
 	
     @PostConstruct

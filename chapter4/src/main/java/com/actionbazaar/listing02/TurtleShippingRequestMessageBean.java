@@ -28,16 +28,16 @@ import org.jboss.ejb3.annotation.ResourceAdapter;
   @ActivationConfigProperty(propertyName = "useJNDI", propertyValue = "false"),
   @ActivationConfigProperty(propertyName = "destinationType",    propertyValue = "javax.jms.Queue"),
 //  @ActivationConfigProperty(propertyName = "destination", propertyValue = "simpleMDBTestQueue") //for resource-adapter-amq
-@ActivationConfigProperty(propertyName = "destination", propertyValue = "testQueueRemoteArtemis") //for pooled-connection-factory
-//  @ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/DLQ") //adjusted tutorilas
+//@ActivationConfigProperty(propertyName = "destination", propertyValue = "testQueueRemoteArtemis") //for pooled-connection-factory
+  @ActivationConfigProperty(propertyName = "destination", propertyValue = "java:/jms/queue/DLQ") //adjusted tutorilas
 //  , 
 //  @ActivationConfigProperty(propertyName = "destinationLookup",  propertyValue = "jms/ShippingRequestQueue") // original tutorilas
 })
 //If you use pooled-connection-factory,you need to set the ResourceAdapter.
-@ResourceAdapter("remote-artemis")
+//@ResourceAdapter("remote-artemis")
 public class TurtleShippingRequestMessageBean
   implements MessageListener {
-	private static final Logger logger = Logger.getLogger(TurtleShippingRequestMessageBean.class.getName());
+  private static final Logger logger = Logger.getLogger(TurtleShippingRequestMessageBean.class.getName());
 
   @PersistenceContext()
   private EntityManager entityManager;
